@@ -11,7 +11,7 @@ import random
 import signal
 import time
 
-import ..distributed
+from .. import distributed
 import torch
 from pytorch_pretrained_bert import BertConfig
 
