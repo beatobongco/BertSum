@@ -1,2 +1,1 @@
-name = "bertsum"
-
+from .summarize import summarize
