@@ -11,15 +11,15 @@ import random
 import signal
 import time
 
+import distributed
 import torch
 from pytorch_pretrained_bert import BertConfig
 
-import distributed
-from models import data_loader, model_builder
-from models.data_loader import load_dataset
-from models.model_builder import Summarizer
-from models.trainer import build_trainer
-from others.logging import logger, init_logger
+from .models import data_loader, model_builder
+from .models.data_loader import load_dataset
+from .models.model_builder import Summarizer
+from .models.trainer import build_trainer
+from .others.logging import init_logger, logger
 
 model_flags = ['hidden_size', 'ff_size', 'heads', 'inter_layers','encoder','ff_actv', 'use_interval','rnn_size']
 

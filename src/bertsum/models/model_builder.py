@@ -1,11 +1,11 @@
 
 import torch
 import torch.nn as nn
-from pytorch_pretrained_bert import BertModel, BertConfig
+from pytorch_pretrained_bert import BertConfig, BertModel
 from torch.nn.init import xavier_uniform_
 
-from models.encoder import TransformerInterEncoder, Classifier, RNNEncoder
-from models.optimizers import Optimizer
+from .encoder import Classifier, RNNEncoder, TransformerInterEncoder
+from .optimizers import Optimizer
 
 
 def build_optim(args, model, checkpoint):
