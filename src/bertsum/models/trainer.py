@@ -1,10 +1,10 @@
 import os
 
-import distributed
 import numpy as np
 import torch
 from tensorboardX import SummaryWriter
 
+import ..distributed
 from ..others.logging import logger
 from ..others.utils import rouge_results_to_str, test_rouge
 # import onmt
