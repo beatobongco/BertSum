@@ -1,0 +1,6 @@
+tensorboardX
+torch
+pyrouge
+multiprocess
+nltk
+numpy
