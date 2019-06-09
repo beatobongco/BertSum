@@ -103,7 +103,7 @@ class BSummarizer(object):
                 return True
         return False
 
-    def summarize(self, src_str, top_n_sentences=3, tgt_str="")
+    def summarize(self, src_str, top_n_sentences=3, tgt_str=""):
         """
         Summarizes input text by returning the most important sentences based on the BERT model fine-tuned on CNN and Daily Mail articles
         """
@@ -135,14 +135,12 @@ class BSummarizer(object):
         ]
         batch = data_loader.Batch(data, is_test=True, device=self.device)
 
-        source_article = [" ".join(article) for article in batch.src_str]
-
         sent_scores, mask = self.model(batch.src, batch.segs, batch.clss, batch.mask, batch.mask_cls)
         sent_scores = sent_scores + mask.float()
         sent_scores = sent_scores.cpu().data.numpy()
         # Sort sentence ids in descending order based on sentence scores (representing summary importance)
         selected_ids = np.argsort(-sent_scores, 1)
-        for i, idx in enumerate(selected_ids):
+        for i in selected_ids:
             _pred = []
             if len(batch.src_str[i]) == 0:
                 continue
