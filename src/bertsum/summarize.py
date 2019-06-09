@@ -80,8 +80,15 @@ args = Namespace(
     block_trigram=True,
 )
 
+# Read BERT config file
+# This contains information about the BERT model (e.g. hidden size for the transformer layers, number of transformer layers, number of self attention heads)
+config = BertConfig.from_json_file(args.bert_config_path)
+# Instantiate Summarizer and load pretrained model
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = Summarizer(args, device, load_pretrained_bert=False, bert_config=config)
+model.load_cp(torch.load(args.model_fp, map_location=lambda storage, loc: storage))
+
 def example_api(
-    self,
     example,
     step,
     top_n_sentences=3,
@@ -111,9 +118,9 @@ def example_api(
 
     if not cal_lead and not cal_oracle:
         # Evaluate without performing backpropagation and dropout
-        self.model.eval()
+        model.eval()
     # Set model device (cuda or cpu)
-    self.model.to(device=device)
+    model.to(device=device)
     source_article = []
     pred = []
     src = example.src
@@ -134,7 +141,7 @@ def example_api(
             for i in range(example.batch_size)
         ]
     else:
-        sent_scores, mask = self.model(src, segs, clss, mask, mask_cls)
+        sent_scores, mask = model(src, segs, clss, mask, mask_cls)
 
         sent_scores = sent_scores + mask.float()
         sent_scores = sent_scores.cpu().data.numpy()
@@ -151,7 +158,7 @@ def example_api(
             if j >= len(example.src_str[i]):
                 continue
             candidate = example.src_str[i][j].strip()
-            if self.args.block_trigram:
+            if args.block_trigram:
                 if not _block_tri(candidate, _pred):
                     _pred.append(candidate)
             else:
@@ -160,7 +167,7 @@ def example_api(
             # len(_pred) == 3 means that we limit sentences to top top_n_sentences
             if (
                 (not cal_oracle)
-                and (not self.args.recall_eval)
+                and (not args.recall_eval)
                 and len(_pred) == top_n_sentences
             ):
                 break
@@ -180,7 +187,7 @@ def summarize(src_str, args=args, pp_args=pp_args, top_n_sentences=3, tgt_str=""
     cp = args.test_from
     step = int(cp.split(".")[-2].split("_")[-1])
     # Separate documents into list of sentences
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     src = [sent.split() for sent in nltk.tokenize.sent_tokenize(src_str)]
     tgt = [sent.split() for sent in nltk.tokenize.sent_tokenize(tgt_str)]
     bert = data_builder.BertData(pp_args)
@@ -206,14 +213,7 @@ def summarize(src_str, args=args, pp_args=pp_args, top_n_sentences=3, tgt_str=""
         ]
     ]
     batch = data_loader.Batch(data, is_test=True, device=device)
-    trained_model = torch.load(args.model_fp, map_location=lambda storage, loc: storage)
-    # Read BERT config file
-    # This contains information about the BERT model (e.g. hidden size for the transformer layers, number of transformer layers, number of self attention heads)
-    config = BertConfig.from_json_file(args.bert_config_path)
-    # Instantiate Summarizer and load pretrained model
-    model = Summarizer(args, device, load_pretrained_bert=False, bert_config=config)
-    model.load_cp(trained_model)
-    device_id = 0 if device == "cuda" else -1
+
     results = example_api(
         batch, step, top_n_sentences=top_n_sentences, device=device
     )
