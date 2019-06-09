@@ -14,8 +14,13 @@ from multiprocess import Pool
 from pytorch_pretrained_bert import BertTokenizer
 
 from ..others.logging import logger
-from ..others.utils import clean
 from .utils import _get_word_ngrams
+
+
+def clean(x):
+    return re.sub(
+        r"-lrb-|-rrb-|-lcb-|-rcb-|-lsb-|-rsb-|``|''", lambda m: REMAP.get(m.group()), x
+    )
 
 
 def load_json(p, lower):
