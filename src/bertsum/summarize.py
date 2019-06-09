@@ -1,5 +1,6 @@
 import nltk
 import numpy as np
+import torch
 
 from .models import data_loader
 from .models.pretrained import args, model, pp_args
@@ -128,6 +129,7 @@ def summarize(src_str, args=args, pp_args=pp_args, top_n_sentences=3, tgt_str=""
             b_dict["tgt_str"],
         ]
     ]
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     batch = data_loader.Batch(data, is_test=True, device=device)
 
     results = example_api(
