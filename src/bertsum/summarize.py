@@ -1,8 +1,8 @@
 import nltk
 import numpy as np
 
-from .model.pretrained import model
 from .models import data_loader
+from .models.pretrained import model
 from .prepro import data_builder
 
 nltk.download("punkt")
