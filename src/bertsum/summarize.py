@@ -2,7 +2,7 @@ import nltk
 import numpy as np
 
 from .models import data_loader
-from .models.pretrained import model
+from .models.pretrained import args, model
 from .prepro import data_builder
 
 nltk.download("punkt")
