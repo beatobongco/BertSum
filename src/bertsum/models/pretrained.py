@@ -79,4 +79,5 @@ config = BertConfig.from_json_file(args.bert_config_path)
 # Instantiate Summarizer and load pretrained model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Summarizer(args, device, load_pretrained_bert=False, bert_config=config)
-model.load_cp(torch.load(args.model_fp, map_location=lambda storage, loc: storage))
+loaded = torch.load(args.model_fp, map_location=lambda storage, loc: storage)
+model.load_cp(loaded)
