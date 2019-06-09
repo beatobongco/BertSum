@@ -6,7 +6,10 @@ from .models import data_loader
 from .models.pretrained import args, model, pp_args
 from .prepro import data_builder
 
-nltk.download("punkt")
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
 
 def example_api(
     example,
