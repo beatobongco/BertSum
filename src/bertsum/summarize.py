@@ -9,7 +9,6 @@ nltk.download("punkt")
 
 def example_api(
     example,
-    step,
     top_n_sentences=3,
     device="cpu",
     cal_lead=False,
@@ -103,8 +102,6 @@ def summarize(src_str, args=args, pp_args=pp_args, top_n_sentences=3, tgt_str=""
     """
     Summarizes input text by returning the most important sentences based on the BERT model fine-tuned on CNN and Daily Mail articles
     """
-    cp = args.test_from
-    step = int(cp.split(".")[-2].split("_")[-1])
     # Separate documents into list of sentences
 
     src = [sent.split() for sent in nltk.tokenize.sent_tokenize(src_str)]
@@ -134,6 +131,6 @@ def summarize(src_str, args=args, pp_args=pp_args, top_n_sentences=3, tgt_str=""
     batch = data_loader.Batch(data, is_test=True, device=device)
 
     results = example_api(
-        batch, step, top_n_sentences=top_n_sentences, device=device
+        batch, top_n_sentences=top_n_sentences, device=device
     )
     return results
