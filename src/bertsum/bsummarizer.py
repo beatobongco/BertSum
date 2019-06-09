@@ -1,6 +1,7 @@
 from argparse import Namespace
 
 import nltk
+import numpy as np
 import torch
 from pytorch_pretrained_bert import BertConfig
 
@@ -48,7 +49,6 @@ class BSummarizer(object):
             dataset="",
             seed=666,
             test_all=False,
-            test_from=MODEL,
             train_from="",
             report_rouge=True,
             block_trigram=True,
@@ -96,9 +96,9 @@ class BSummarizer(object):
         return ngram_set
 
     def _block_tri(self, c, p):
-        tri_c = _get_ngrams(3, c.split())
+        tri_c = self._get_ngrams(3, c.split())
         for s in p:
-            tri_s = _get_ngrams(3, s.split())
+            tri_s = self._get_ngrams(3, s.split())
             if len(tri_c.intersection(tri_s)) > 0:
                 return True
         return False
@@ -150,8 +150,8 @@ class BSummarizer(object):
                 if j >= len(batch.src_str[i]):
                     continue
                 candidate = batch.src_str[i][j].strip()
-                if args.block_trigram:
-                    if not _block_tri(candidate, _pred):
+                if self.args.block_trigram:
+                    if not self._block_tri(candidate, _pred):
                         _pred.append(candidate)
                 else:
                     _pred.append(candidate)
