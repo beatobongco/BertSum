@@ -8,7 +8,7 @@ from .model_builder import Summarizer
 # TODO: make this configurable
 MODELS_DIR = "/home/beato/bert-server/models/"
 CONFIG_DIR = "/home/beato/bert-server/config/"
-MODEL = "model_step_43000.pt"
+MODEL = "bertsum_state_dict.pt"
 MODEL_FP = f"{MODELS_DIR}{MODEL}"
 
 # Preprocessing arguments
