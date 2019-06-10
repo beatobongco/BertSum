@@ -3,3 +3,4 @@ torch
 multiprocess
 nltk
 numpy
+pytorch-pretrained-bert
