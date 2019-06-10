@@ -86,6 +86,9 @@ class BSummarizer(object):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = Summarizer(self.args, self.device, load_pretrained_bert=False, bert_config=self.bert_config)
         model.load_cp(torch.load(model_path, map_location=lambda storage, loc: storage))
+        # Evaluate without performing backpropagation and dropout
+        model.eval()
+        model.to(device=self.device)
         self.model = model
 
     def _get_ngrams(self, n, text):
