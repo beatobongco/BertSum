@@ -1,3 +1,5 @@
+from argparse import Namespace
+
 import nltk
 import numpy as np
 import torch
