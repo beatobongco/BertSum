@@ -1,10 +1,9 @@
-from argparse import Namespace
-
 import nltk
 import numpy as np
 import torch
 from pytorch_pretrained_bert import BertConfig
 
+from .default_args import preprocessing_args, summarizer_args
 from .models import data_loader
 from .models.model_builder import Summarizer
 from .prepro import data_builder
@@ -12,61 +11,12 @@ from .prepro import data_builder
 
 class BSummarizer(object):
     """Summarizer class that only requires a pretrained model"""
-    def __init__(self, model_path):
+    def __init__(self, model_path, summarizer_args=summarizer_args, preprocessing_args=preprocessing_args):
         # BERT model args
-        self.args = Namespace(
-            encoder="transformer",
-            mode="test",
-            bert_data_path="/home/sample_data/cnndm",
-            result_path="/home/bert_results/cnndm",
-            temp_dir="/home/temp/",
-            batch_size=1000,
-            use_interval=True,
-            hidden_size=128,
-            ff_size=2048,  # Size used during training
-            heads=4,
-            inter_layers=2,
-            rnn_size=512,
-            param_init=0.0,
-            param_init_glorot=True,
-            dropout=0.1,
-            optim="adam",
-            lr=1,
-            beta1=0.9,
-            beta2=0.999,
-            decay_method="",
-            warmup_steps=8000,
-            max_grad_norm=0,
-            save_checkpoint_steps=5,
-            accum_count=1,
-            world_size=1,
-            report_every=1,
-            train_steps=1000,
-            recall_eval=False,
-            visible_gpus="-1",
-            gpu_ranks="0",
-            log_file="/home/logs/cnndm.log",
-            dataset="",
-            seed=666,
-            test_all=False,
-            train_from="",
-            report_rouge=True,
-            block_trigram=True,
-        )
+        self.args = summarizer_args
 
         # Preprocessing arguments
-        self.pp_args = Namespace(
-            mode="",
-            oracle_mode="greedy",
-            shard_size=2000,
-            min_nsents=3,
-            max_nsents=100,
-            min_src_ntokens=5,
-            max_src_ntokens=200,
-            lower=True,
-            dataset="",
-            n_cpus=2,
-        )
+        self.pp_args = preprocessing_args
 
         self.bert_config = BertConfig.from_dict({
             "attention_probs_dropout_prob": 0.1,
