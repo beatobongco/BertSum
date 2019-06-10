@@ -19,8 +19,8 @@ Note that for this to work you will need to train a `Summarizer` model from http
 ```py
 from bertsum import BSummarizer
 
-# You can also pass various configuration options such as Summarizer configuration
-b = BSummarizer('<PATH TO STATE DICT>')
+# You can also pass data preprocessing configuration and pretrained bert configuration
+b = BSummarizer('<PATH TO STATE DICT>', summarizer_args={'dict_of_your': 'args'})
 
 # https://www.theguardian.com/film/2017/feb/19/john-wick-chapter-2-review-keanu-reeves-full-force
 b.summarize("""John Wick is a man of focus, commitment and sheer will. The stories you hear about this man, if nothing else, have been watered down”, or so the legend goes. In the follow-up to the slick 2014 action-thriller, former hitman Wick (Keanu Reeves, more magnetic than ever) is ushered out of retirement once again. Attempting to find peace as part of his new life in upstate New York, he is forced to honour the blood oath he once made to Italian playboy Santino D’Antonio (Riccardo Scamarcio). Wick’s bounty lives in Rome, the perfect setting for a Bond-style montage of Reeves trying on tailored suits and meeting a “sommelier” who deals firearms instead of fine wines, and a breathlessly violent chase through the catacombs, complete with thrashing heavy metal soundtrack. With their jewel-toned neon lighting and often elegant settings (look out for an art gallery cameo and a gorgeous ancient Roman bath), there’s poetry and pathos in the film’s balletic fight sequences, even if the body count begins to become difficult to stomach as the film races towards its bloody climax. The Wick franchise aspires to Hong Kong-style martial arts films, differentiating it from Bond or Bourne. An adrenaline-pumping blockbuster polished to near perfection, save its sequel-baiting conclusion.""")
