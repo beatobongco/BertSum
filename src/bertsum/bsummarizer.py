@@ -3,34 +3,31 @@ import numpy as np
 import torch
 from pytorch_pretrained_bert import BertConfig
 
-from .default_args import preprocessing_args, summarizer_args
+from .default_args import bert_config, preprocessing_args, summarizer_args
 from .models import data_loader
 from .models.model_builder import Summarizer
 from .prepro import data_builder
 
 
 class BSummarizer(object):
-    """Summarizer class that only requires a pretrained model"""
-    def __init__(self, model_path, summarizer_args=summarizer_args, preprocessing_args=preprocessing_args):
+    """Ready-to-import summarizer class.
+
+        Args:
+            model_path: str: full path of the Summarizer's PyTorch state_dict
+            summarizer_args: dict: configuration variables for the Summarizer model
+            preprocessing_args: dict: configuration variables for data_builder.BertData
+            bert_config: dict: configuration variables for the pretrained BERT model
+    """
+    def __init__(self, model_path, summarizer_args=summarizer_args, preprocessing_args=preprocessing_args, bert_config=bert_config):
         # BERT model args
-        self.args = summarizer_args
+        self.args = Namespace()
+        self.args.__dict__ = summarizer_args
 
         # Preprocessing arguments
-        self.pp_args = preprocessing_args
+        self.pp_args = Namespace()
+        self.pp_args.__dict__ = preprocessing_args
 
-        self.bert_config = BertConfig.from_dict({
-            "attention_probs_dropout_prob": 0.1,
-            "hidden_act": "gelu",
-            "hidden_dropout_prob": 0.1,
-            "hidden_size": 768,
-            "initializer_range": 0.02,
-            "intermediate_size": 3072,
-            "max_position_embeddings": 512,
-            "num_attention_heads": 12,
-            "num_hidden_layers": 12,
-            "type_vocab_size": 2,
-            "vocab_size": 30522
-        })
+        self.bert_config = BertConfig.from_dict(bert_config)
 
         self.BertData = data_builder.BertData(self.pp_args)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
