@@ -1,4 +1,35 @@
-# BertSum
+# BertSum Packaged
+
+Packaged version of https://github.com/nlpyang/BertSum from the script and pretrained model of https://github.com/enzoampil
+
+## Setup
+
+```
+pip install -r requirements.txt
+cd src/
+python setup.py install
+```
+
+## Usage
+
+During the first run, a pretrained BERT model will be downloaded.
+
+Note that for this to work you will need to train a `Summarizer` model from https://github.com/nlpyang/BertSum and [save the model's state dictionary](https://pytorch.org/tutorials/beginner/saving_loading_models.html#save-load-state-dict-recommended) and note the path where it is saved and configuration variables you used to train it.
+
+```py
+from bertsum import BSummarizer
+
+# You can also pass various configuration options such as Summarizer configuration
+b = BSummarizer('<PATH TO STATE DICT>')
+
+# https://www.theguardian.com/film/2017/feb/19/john-wick-chapter-2-review-keanu-reeves-full-force
+b.summarize("""John Wick is a man of focus, commitment and sheer will. The stories you hear about this man, if nothing else, have been watered down”, or so the legend goes. In the follow-up to the slick 2014 action-thriller, former hitman Wick (Keanu Reeves, more magnetic than ever) is ushered out of retirement once again. Attempting to find peace as part of his new life in upstate New York, he is forced to honour the blood oath he once made to Italian playboy Santino D’Antonio (Riccardo Scamarcio). Wick’s bounty lives in Rome, the perfect setting for a Bond-style montage of Reeves trying on tailored suits and meeting a “sommelier” who deals firearms instead of fine wines, and a breathlessly violent chase through the catacombs, complete with thrashing heavy metal soundtrack. With their jewel-toned neon lighting and often elegant settings (look out for an art gallery cameo and a gorgeous ancient Roman bath), there’s poetry and pathos in the film’s balletic fight sequences, even if the body count begins to become difficult to stomach as the film races towards its bloody climax. The Wick franchise aspires to Hong Kong-style martial arts films, differentiating it from Bond or Bourne. An adrenaline-pumping blockbuster polished to near perfection, save its sequel-baiting conclusion.""")
+
+# Ouput
+{'result': 'In the follow-up to the slick 2014 action-thriller, former hitman Wick (Keanu Reeves, more magnetic than ever) is ushered out of retirement once again. The Wick franchise aspires to Hong Kong-style martial arts films, differentiating it from Bond or Bourne. John Wick is a man of focus, commitment and sheer will.'}
+```
+
+## Original README.md
 
 **This code is for paper `Fine-tune BERT for Extractive Summarization`**(https://arxiv.org/pdf/1903.10318.pdf)
 
@@ -35,7 +66,7 @@ We will need Stanford CoreNLP to tokenize the data. Download it [here](https://s
 ```
 export CLASSPATH=/path/to/stanford-corenlp-full-2017-06-09/stanford-corenlp-3.8.0.jar
 ```
-replacing `/path/to/` with the path to where you saved the `stanford-corenlp-full-2017-06-09` directory. 
+replacing `/path/to/` with the path to where you saved the `stanford-corenlp-full-2017-06-09` directory.
 
 ####  Step 3. Sentence Splitting and Tokenization
 
@@ -47,9 +78,9 @@ python preprocess.py -mode tokenize -raw_path RAW_PATH -save_path TOKENIZED_PATH
 
 
 ####  Step 4. Format to Simpler Json Files
- 
+
 ```
-python preprocess.py -mode format_to_lines -raw_path RAW_PATH -save_path JSON_PATH -map_path MAP_PATH -lower 
+python preprocess.py -mode format_to_lines -raw_path RAW_PATH -save_path JSON_PATH -map_path MAP_PATH -lower
 ```
 
 * `RAW_PATH` is the directory containing tokenized files (`../merged_stories_tokenized`), `JSON_PATH` is the target directory to save the generated json files (`../json_data/cnndm`), `MAP_PATH` is the  directory containing the urls files (`../urls`)
@@ -61,7 +92,7 @@ python preprocess.py -mode format_to_bert -raw_path JSON_PATH -save_path BERT_DA
 
 * `JSON_PATH` is the directory containing json files (`../json_data`), `BERT_DATA_PATH` is the target directory to save the generated binary files (`../bert_data`)
 
-* `-oracle_mode` can be `greedy` or `combination`, where `combination` is more accurate but takes much longer time to process 
+* `-oracle_mode` can be `greedy` or `combination`, where `combination` is more accurate but takes much longer time to process
 
 ## Model Training
 
