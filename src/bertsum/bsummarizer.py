@@ -20,7 +20,14 @@ class BSummarizer(object):
             preprocessing_args: dict: configuration variables for data_builder.BertData
             bert_config: dict: configuration variables for the pretrained BERT model
     """
-    def __init__(self, model_path, summarizer_args=summarizer_args, preprocessing_args=preprocessing_args, bert_config=bert_config):
+
+    def __init__(
+        self,
+        model_path,
+        summarizer_args=summarizer_args,
+        preprocessing_args=preprocessing_args,
+        bert_config=bert_config,
+    ):
         # BERT model args
         self.args = Namespace()
         self.args.__dict__ = summarizer_args
@@ -33,9 +40,16 @@ class BSummarizer(object):
 
         self.BertData = data_builder.BertData(self.pp_args)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = Summarizer(self.args, self.device, load_pretrained_bert=False, bert_config=self.bert_config)
+        model = Summarizer(
+            self.args,
+            self.device,
+            load_pretrained_bert=False,
+            bert_config=self.bert_config,
+        )
         model.load_cp(torch.load(model_path, map_location=lambda storage, loc: storage))
         # Evaluate without performing backpropagation and dropout
+        for param in model.parameters():
+            param.requires_grad = False
         model.eval()
         model.to(device=self.device)
         self.model = model
@@ -68,18 +82,11 @@ class BSummarizer(object):
             return {"error": "Not enough text to create a summary."}
 
         indexed_tokens, labels, segments_ids, cls_ids, src_txt, tgt_txt = b_data
-        data = [
-            [
-                indexed_tokens,
-                labels,
-                segments_ids,
-                cls_ids,
-                src_txt,
-                tgt_txt,
-            ]
-        ]
+        data = [[indexed_tokens, labels, segments_ids, cls_ids, src_txt, tgt_txt]]
         batch = data_loader.Batch(data, is_test=True, device=self.device)
-        sent_scores, mask = self.model(batch.src, batch.segs, batch.clss, batch.mask, batch.mask_cls)
+        sent_scores, mask = self.model(
+            batch.src, batch.segs, batch.clss, batch.mask, batch.mask_cls
+        )
         sent_scores = sent_scores + mask.float()
         sent_scores = sent_scores.cpu().data.numpy()
         # Sort sentence ids in descending order based on sentence scores (representing summary importance)
